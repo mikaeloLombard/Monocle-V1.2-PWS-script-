@@ -1,0 +1,572 @@
+Add-Type -AssemblyName System.windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+
+
+#Makes the [] shorter and easier to call
+$FormObject = [System.windows.Forms.Form]
+$LabelObject = [System.windows.Forms.Label]
+
+$ButtonObject = [System.windows.Forms.Button]
+
+
+#Sets variable for font at form-level
+$DefaultFont = 'Verdana,12'
+
+
+
+
+$label = New-Object System.Windows.Forms.Label
+$label.Location = New-Object System.Drawing.Point(20,10) ### Location of where the label will be
+$label.AutoSize = $True
+$Font = New-Object System.Drawing.Font("Arial",12,[System.Drawing.FontStyle]::Bold) ### Formatting text for the label
+$label.Font = $Font
+$label.Text = 'Device :' ### Text of label, defined by the parameter that was used when the function is called
+$label.ForeColor = 'Red' ### Color of the label text
+
+## Setup base form
+$AppForm = New-Object $FormObject
+$AppForm.ClientSize = '675,890'
+$AppForm.Text = 'MONOCLE'
+$AppForm.BackColor = '#76a0c4'
+
+
+#font at form level
+$AppForm.Font = $DefaultFont
+
+
+### Inserting the text box that will accept input
+$textBox = New-Object System.Windows.Forms.TextBox
+$textBox.Location = New-Object System.Drawing.Point(90,10) ### Location of the text box
+$textBox.Size = New-Object System.Drawing.Size(200,25) ### Size of the text box
+##$textBox.Multiline = $true ### Allows multiple lines of data
+##$textbox.AcceptsReturn = $true ### By hitting enter it creates a new line
+$textBox.ScrollBars = "Vertical" ### Allows for a vertical scroll bar if the list of text is too big for the window
+
+
+### Buttons ->
+### Adding View button to the text box window
+$ViewButton = New-Object System.Windows.Forms.Button
+$ViewButton.Location = New-Object System.Drawing.Point(20,55) ### Location of where the button will be
+$ViewButton.Size = New-Object System.Drawing.Size(75,23) ### Size of the button
+$ViewButton.Text = 'View' ### Text inside the button
+$ViewButton.BackColor = '#b5dff7'
+
+$AppForm.AcceptButton = $ViewButton
+
+### Adding Enable Bitlocker button to the text box window
+$EnBitlockerButton = New-Object System.Windows.Forms.Button
+$EnBitlockerButton.Location = New-Object System.Drawing.Point(570,510)
+$EnBitlockerButton.Size = New-Object System.Drawing.Size(75,28)
+$EnBitlockerButton.Text = 'Enable'
+$EnBitlockerButton.ForeColor = '#1b6e30'
+$EnBitlockerButton.BackColor = '#34f782'
+
+### Adding Disable Bitlocker button to the text box window
+$DisBitlockerButton = New-Object System.Windows.Forms.Button
+$DisBitlockerButton.Location = New-Object System.Drawing.Point(570,550)
+$DisBitlockerButton.Size = New-Object System.Drawing.Size(75,28)
+$DisBitlockerButton.Text = 'Disable'
+$DisBitlockerButton.ForeColor = 'white'
+$DisBitlockerButton.BackColor = '#fc2876'
+
+## Adding Reboot Button
+$RebootButton = New-Object System.Windows.Forms.Button
+$RebootButton.Location = New-Object System.Drawing.Point(250,600) ### Location of where the button will be
+$RebootButton.Size = New-Object System.Drawing.Size(160,28) ### Size of the button
+$RebootButton.Text = 'Reboot Device' ### Text inside the button
+$RebootButton.ForeColor = 'white'
+$RebootButton.BackColor = '#3363bd' 
+
+## Eject User Button
+
+$EjectUserButton = New-Object System.Windows.Forms.Button
+$EjectUserButton.Location = New-Object System.Drawing.Point(570,230) ### Location of where the button will be
+$EjectUserButton.Size = New-Object System.Drawing.Size(75,30) ### Size of the button
+$EjectUserButton.ForeColor = 'white'
+$EjectUserButton.Text = 'Logoff' ### Text inside the button
+$EjectUserButton.BackColor = '#3363bd'
+
+## Kiosk button
+$KioskButton = New-Object System.Windows.Forms.Button
+$KioskButton.Location = New-Object System.Drawing.Point(570,15) ### Location of where the button will be
+$KioskButton.Size = New-Object System.Drawing.Size(75,30) ### Size of the button
+$KioskButton.ForeColor = 'white'
+$KioskButton.Text = 'Scope' ### Text inside the button
+$KioskButton.BackColor = '#2a126b'
+
+
+#Building the form
+
+#Load the drop down list for services
+#Get-Service | ForEach-Object{$ddlService.Items.Add($_.Name)}
+
+$lblForError = New-Object $LabelObject
+$lblForError.Text = ''
+$lblForError.ForeColor = 'Red'
+$lblForError.AutoSize = $true
+$lblForError.Location = New-Object System.Drawing.Point(50,80)
+
+##IPs
+
+$lblForIp = New-Object $LabelObject
+$lblForIp.Text = 'IPs :'
+$lblForIp.AutoSize = $true
+$lblForIp.Location = New-Object System.Drawing.Point(50,110)
+
+$lblIp = New-Object System.Windows.Forms.TextBox
+$lblIp.Text = ''
+$lblIp.Size = New-Object System.Drawing.Size(450,25)
+$lblIp.Location = New-Object System.Drawing.Point(110,110)
+
+##MacAddress
+
+$lblForMac = New-Object $LabelObject
+$lblForMac.Text = 'MAC :'
+$lblForMac.AutoSize = $true
+$lblForMac.Location = New-Object System.Drawing.Point(50,150)
+
+
+$lblMac = New-Object System.Windows.Forms.TextBox
+$lblMac.Text = ''
+$lblMac.Size = New-Object System.Drawing.Size(450,25)
+$lblMac.Location = New-Object System.Drawing.Point(110,150)
+
+##Model
+
+$lblForModel = New-Object $LabelObject
+$lblForModel.Text = 'Model:'
+$lblForModel.AutoSize = $true
+$lblForModel.Location = New-Object System.Drawing.Point(40,190)
+
+
+$lblModel = New-Object System.Windows.Forms.TextBox
+$lblModel.Text = ''
+$lblModel.Size = New-Object System.Drawing.Size(450,25)
+$lblModel.Location = New-Object System.Drawing.Point(110,190)
+
+##User
+
+$lblForUser = New-Object $LabelObject
+$lblForUser.Text = 'User:'
+$lblForUser.AutoSize = $true
+$lblForUser.Location = New-Object System.Drawing.Point(40,230)
+
+
+$lblUser = New-Object System.Windows.Forms.TextBox
+$lblUser.Text = ''
+$lblUser.Size = New-Object System.Drawing.Size(450,25)
+$lblUser.Location = New-Object System.Drawing.Point(110,230)
+
+##Sessions
+
+
+$lblForSessions = New-Object $LabelObject
+$lblForSessions.Text = 'Sessions:'
+$lblForSessions.AutoSize = $true
+$lblForSessions.Location = New-Object System.Drawing.Point(20,270)
+
+
+$lblSessions = New-Object System.Windows.Forms.TextBox
+$lblSessions.Text = ''
+$lblSessions.Multiline = $true
+$lblSessions.ScrollBars = "Vertical"
+$lblSessions.Size = New-Object System.Drawing.Size(450,25)
+$lblSessions.Location = New-Object System.Drawing.Point(110,270)
+
+##LastBoot
+
+$lblForLastBoot = New-Object $LabelObject
+$lblForLastBoot.Text = 'Last Boot:'
+$lblForLastBoot.AutoSize = $true
+$lblForLastBoot.Location = New-Object System.Drawing.Point(15,310)
+
+$lblLastBoot = New-Object System.Windows.Forms.TextBox
+$lblLastBoot.Text = ''
+$lblLastBoot.Size = New-Object System.Drawing.Size(450,25)
+$lblLastBoot.Location = New-Object System.Drawing.Point(110,310)
+
+##BIOs version
+
+$lblForBIOS = New-Object $LabelObject
+$lblForBIOS.Text = 'BIOS:'
+$lblForBIOS.AutoSize = $true
+$lblForBIOS.Location = New-Object System.Drawing.Point(35,350)
+
+$lblBIOS = New-Object System.Windows.Forms.TextBox
+$lblBIOS.Text = ''
+$lblBIOS.Size = New-Object System.Drawing.Size(450,25)
+$lblBIOS.Location = New-Object System.Drawing.Point(110,350)
+
+##Serial
+
+$lblForSerialN = New-Object $LabelObject
+$lblForSerialN.Text = 'SN:'
+$lblForSerialN.AutoSize = $true
+$lblForSerialN.Location = New-Object System.Drawing.Point(60,390)
+
+$lblSerialN = New-Object System.Windows.Forms.TextBox
+$lblSerialN.Text = ''
+$lblSerialN.Size = New-Object System.Drawing.Size(450,25)
+$lblSerialN.Location = New-Object System.Drawing.Point(110,390)
+
+## Memory (RAM)
+
+$lblForRAM = New-Object $LabelObject
+$lblForRAM.Text = 'Memory:'
+$lblForRAM.AutoSize = $true
+$lblForRAM.Location = New-Object System.Drawing.Point(25,430)
+
+$lblRAM = New-Object System.Windows.Forms.TextBox
+$lblRAM.Text = ''
+$lblRAM.Size = New-Object System.Drawing.Size(450,25)
+$lblRAM.Location = New-Object System.Drawing.Point(110,430)
+
+##OS
+
+$lblForOS = New-Object $LabelObject
+$lblForOS.Text = 'OS:'
+$lblForOS.AutoSize = $true
+$lblForOS.Location = New-Object System.Drawing.Point(60,470)
+
+$lblOS = New-Object System.Windows.Forms.TextBox
+$lblOS.Text = ''
+$lblOS.Size = New-Object System.Drawing.Size(450,25)
+$lblOS.Location = New-Object System.Drawing.Point(110,470)
+
+##Bitlocker
+
+$lblForBL = New-Object $LabelObject
+$lblForBL.Text = 'Bitlocker:'
+$lblForBL.AutoSize = $true
+$lblForBL.Location = New-Object System.Drawing.Point(20,510)
+
+$lblBL = New-Object System.Windows.Forms.TextBox
+$lblBL.Text = ''
+$lblBL.Multiline = $true
+$lblBL.ScrollBars = "Vertical"
+$lblBL.Size = New-Object System.Drawing.Size(450,75)
+$lblBL.Location = New-Object System.Drawing.Point(110,510)
+
+##SecureBoot
+
+$lblForSecBoot= New-Object $LabelObject
+$lblForSecBoot = New-Object $LabelObject
+$lblForSecBoot.Text = 'Sec/Boot:'
+$lblForSecBoot.AutoSize = $true
+$lblForSecBoot.Location = New-Object System.Drawing.Point(10,600)
+
+$lblSecBoot = New-Object System.Windows.Forms.TextBox
+$lblSecBoot.Text = ''
+
+$lblSecBoot.Size = New-Object System.Drawing.Size(100,25)
+$lblSecBoot.Location = New-Object System.Drawing.Point(110,600)
+
+#Active Dir Description
+
+$lblForADD = New-Object $LabelObject
+$lblForADD.Text = 'Active Directory:'
+$lblForADD.AutoSize = $true
+$lblForADD.Location = New-Object System.Drawing.Point(20,650)
+
+$lblADD = New-Object System.Windows.Forms.TextBox
+$lblADD.Text = ''
+$lblADD.Multiline = $true
+$lblADD.ScrollBars = "Vertical"
+$lblADD.Size = New-Object System.Drawing.Size(450,150)
+$lblADD.Location = New-Object System.Drawing.Point(110,685)
+
+
+
+$AppForm.Controls.AddRange(@($ViewButton,$EnBitlockerButton,$DisBitlockerButton,$RebootButton,$EjectUserButton,$KioskButton,$lblForError,$textBox,$lblForIp,$lblIp,$lblForIp,$lblForMac,$lblMac,$label,$lblForModel,$lblModel,$lblForUser,$lblUser,$lblForSessions,$lblSessions,$lblForLastBoot,$lblLastBoot,$lblForBIOS,$lblBIOS,$lblForSerialN,$lblSerialN,$lblForRAM,$lblRAM,$lblForOS,$lblOS,$lblForBL,$lblBL,$lblForSecBoot,$lblSecBoot,$lblForADD,$lblADD))
+
+##Add functions to form
+
+function SharedAction {
+
+$DeviceName = $textBox.Text
+   
+    ##Remote computer
+    if($DeviceName -ne ''){
+   
+    $lblForError.Text = ''
+    $SessionDisp=NEW-PSSESSION -computername $DeviceName | Select-Object Name, Id, State
+   
+    $ipDisp = Invoke-Command -ComputerName $DeviceName -ScriptBlock {[System.Net.Dns]::GetHostAddresses($DeviceName)}
+   
+    $MacDisp = Get-WmiObject -Class Win32_NetworkAdapterConfiguration -Filter "IPEnabled='True'" -ComputerName $DeviceName | Select-Object -Property MACAddress, Description
+    $ModelDisp = Get-WmiObject -Class Win32_ComputerSystem -ComputerName $DeviceName | Select-Object -Property Manufacturer, Model, UserName
+    $UserDisp = $ModelDisp.UserName
+    $LBootDisp = Get-CimInstance -ClassName win32_operatingsystem -ComputerName $DeviceName | select csname, lastbootuptime  
+    $BIOSDisp = Get-WMIObject -Class Win32_BIOS -ComputerName $DeviceName | select ComputerName, BIOSVersion, SerialNumber
+    $SNDisp = $BIOSDisp.SerialNumber
+    $RAMDisp = Invoke-Command -ComputerName $DeviceName {Get-WmiObject win32_computersystem} | select @{name="RAM (GB)";e={[math]::Round($_.totalphysicalmemory/1GB,0)}}
+    $OSDisp = Get-WmiObject -ComputerName $DeviceName -Class Win32_OperatingSystem | select caption, Version
+    $BLDisp = manage-bde -status -ComputerName $DeviceName c:
+    $ActiveDirDisp =  Get-AdComputer -Identity $DeviceName -properties * | Select-Object Name, Description
+    $SecureBootDisp = Invoke-Command -ComputerName $DeviceName {Confirm-SecureBootUEFI}
+
+
+    #IP
+    $IpV4_6Disp = $ipDisp -replace '%'
+    $lblIp.Text = $IpV4_6Disp
+    $lblIp.ForeColor = 'blue'
+    #MAC
+    $lblMac.Text = $MacDisp.MACAddress
+    $lblMac.ForeColor = 'blue'
+    #Model
+    $lblModel.Text = $ModelDisp.Model + ' ' + $ModelDisp.Manufacturer
+    $lblModel.ForeColor = 'blue'
+    #User
+    $lblUser.Text = $UserDisp
+    $lblUser.ForeColor = 'blue'
+    #Sessions
+    $lblSessions.Text = 'Name: ' + $SessionDisp.Name + ' ' + 'Id: ' + $SessionDisp.Id + ' ' + 'State: ' + $SessionDisp.State
+    $lblSessions.ForeColor = 'blue'
+    #LastBootTime
+    $lblLastBoot.Text = $LBootDisp.lastbootuptime
+    $lblLastBoot.ForeColor = 'blue'
+    #BIOSinfo
+    $lblBIOS.Text = $BIOSDisp.BIOSVersion
+    $lblBIOS.ForeColor = 'blue'
+    #SerialNumber
+    $lblSerialN.Text = $SNDisp
+    $lblSerialN.ForeColor = 'blue'
+    #RAM
+    $lblRAM.Text = $RAMDisp -replace '[@, {,}]'
+    $lblRAM.ForeColor = 'blue'
+    #OS
+    $lblOS.Text = $OSDisp.caption + ' Version: ' + $OSDisp.Version
+    $lblOS.ForeColor = 'blue'
+    #Bitlocker
+    $lblBL.Text = $BLDisp
+    $lblBL.ForeColor = 'blue'
+    #AD
+    $lblADD.Text = $ActiveDirDisp.Name + ' Description: ' + $ActiveDirDisp.Description
+    $lblADD.ForeColor = 'blue'
+    #SecureBoot
+   
+    If($SecureBootDisp -eq 'True'){
+    $lblSecBoot.Text = 'Enabled'
+    $lblSecBoot.ForeColor ='Green'
+    }
+    If($SecureBootDisp -ne 'True'){
+    $lblSecBoot.Text = 'Disabled'
+    $lblSecBoot.ForeColor ='Red'
+    }
+
+   
+    }
+
+   
+    if($DeviceName -eq ''){
+    $lblForError.Text = 'You need to Enter the Name of the Device'
+   
+       
+    }
+    return ($lblIp.Text,$lblMac.Text,$lblModel.Text,$lblUser.Text,$lblSessions.Text,$lblLastBoot.Text)
+
+}
+
+$ViewButton.Add_Click({
+   SharedAction
+   
+})
+##Enable BitLocker Button Action
+$EnBitlockerButton.Add_Click({
+
+    $DeviceName = $textBox.Text
+    manage-bde -on -ComputerName $DeviceName  c: 
+    $lblForError.Text = 'Enabling BitLocker...'
+    Start-Sleep 5
+   
+    SharedAction
+    $lblForError.Text = ''
+})
+
+##Disable BitLocker Button Action
+$DisBitlockerButton.Add_Click({
+
+    $DeviceName = $textBox.Text
+    
+    manage-bde -off -ComputerName $DeviceName c: 
+    $lblForError.Text = 'Disabling BitLocker...'
+    Start-Sleep 4
+   
+    SharedAction
+    $lblForError.Text = ''
+})
+##Reboot Action
+$RebootButton.Add_Click({
+    $DeviceName = $textBox.Text
+    Restart-Computer -ComputerName $DeviceName -Force
+    $lblForError.Text = 'Device is being rebooted'
+    Start-Sleep 4
+    $lblForError.Text = 'Reboot could take 5 minutes or more'
+    Start-Sleep 9
+    
+    $lblForError.Text = ''
+})
+##Logoff User Action
+$EjectUserButton.Add_Click({
+    $DeviceName = $textBox.Text
+    $ModelDisp = Get-WmiObject -Class Win32_ComputerSystem -ComputerName $DeviceName | Select-Object -Property Manufacturer, Model, UserName
+    Invoke-CimMethod -ClassName Win32_Operatingsystem -ComputerName $DeviceName -MethodName Win32Shutdown -Arguments @{ Flags = 4 }
+    
+    Start-Sleep 7
+    
+    
+    $lblForError.Text = ''
+})
+
+##Scope Button Action named "Kiosk" in all variables
+
+$KioskButton.Add_Click({
+    Add-Type -AssemblyName System.windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+
+
+#Makes the [] shorter and easier to call
+$FormObject = [System.windows.Forms.Form]
+$LabelObject = [System.windows.Forms.Label]
+
+$ButtonObject = [System.windows.Forms.Button]
+
+
+#Sets variable for font at form-level
+$DefaultFont = 'Verdana,12'
+
+
+
+
+
+
+## Setup base form
+$AppForm = New-Object $FormObject
+$AppForm.ClientSize = '700,400'
+$AppForm.Text = 'MONOCLE Scope'
+$AppForm.BackColor = '#8cb1fa'
+#font at form level
+$AppForm.Font = $DefaultFont
+
+
+$label = New-Object System.Windows.Forms.Label
+$label.Location = New-Object System.Drawing.Point(20,30) ### Location of where the label will be
+$label.AutoSize = $True
+$Font = New-Object System.Drawing.Font("Arial",12,[System.Drawing.FontStyle]::Bold) ### Formatting text for the label
+$label.Font = $Font
+$label.Text = 'Device:' ### Text of label, defined by the parameter that was used when the function is called
+$label.ForeColor = 'Red' ### Color of the label text
+
+
+### Inserting the text box that will accept input
+$textBox2 = New-Object System.Windows.Forms.TextBox
+$textBox2.Location = New-Object System.Drawing.Point(90,27) ### Location of the text box
+$textBox2.Size = New-Object System.Drawing.Size(200,25) ### Size of the text box
+##$textBox.Multiline = $true ### Allows multiple lines of data
+##$textbox.AcceptsReturn = $true ### By hitting enter it creates a new line
+$textBox2.ScrollBars = "Vertical" ### Allows for a vertical scroll bar if the list of text is too big for the window
+
+
+
+
+##Sessions box
+
+$SessionBox = New-Object System.Windows.Forms.TextBox
+$SessionBox.Location = New-Object System.Drawing.Point(90,80) ### Location of the text box
+$SessionBox.Size = New-Object System.Drawing.Size(540,200) ### Size of the text box
+$SessionBox.Multiline = $true
+$Font2 = New-Object System.Drawing.Font("Arial",10,[System.Drawing.FontStyle]::Bold)
+$SessionBox.Font = $Font2
+$SessionBox.Text = ' '
+$SessionBox.ScrollBars = "Vertical" ### Allows for a vertical scroll bar if the list of text is too big for the window
+
+##Id Box
+
+$IdBox = New-Object System.Windows.Forms.TextBox
+$IdBox.Location = New-Object System.Drawing.Point(535,300) ### Location of the text box
+$IdBox.Size = New-Object System.Drawing.Size(55,30) ### Size of the text box
+$IdBox.Multiline = $true
+$IdBox.Text = '0'
+
+### Buttons ->
+### Adding Session buttons to the text box window
+
+
+
+## Logoff User Button
+
+$SessionsButton = New-Object System.Windows.Forms.Button
+$SessionsButton.Location = New-Object System.Drawing.Point(300,27) 
+$SessionsButton.Size = New-Object System.Drawing.Size(90,33) 
+$SessionsButton.ForeColor = 'white'
+$SessionsButton.Text = 'Sessions' 
+$SessionsButton.BackColor = '#3363bd'
+
+$ChooseIDButton = New-Object System.Windows.Forms.Button
+$ChooseIDButton.Location = New-Object System.Drawing.Point(600,300) 
+$ChooseIDButton.Size = New-Object System.Drawing.Size(75,30) 
+$ChooseIDButton.Text = 'LogOff' 
+$ChooseIDButton.BackColor = '#b5dff7'
+
+
+## Restart Kiosk
+
+
+#$RestartButton = New-Object System.Windows.Forms.Button
+#$RestartButton.Location = New-Object System.Drawing.Point(460,27) ### Location of where the button will be
+#$RestartButton.Size = New-Object System.Drawing.Size(160,30) ### Size of the button
+#$RestartButton.Text = 'Reboot Device' ### Text inside the button
+#$RestartButton.ForeColor = 'white'
+#$RestartButton.BackColor = '#2e2594'
+
+
+
+$AppForm.Controls.AddRange(@($SessionsButton,$ChooseIDButton,$textBox2,$label,$SessionBox,$IdBox))
+
+##get sessions Action
+
+$SessionsButton.Add_Click({
+    $DeviceName = $textBox2.Text
+    ##Invoke-CimMethod -ClassName Win32_Operatingsystem -ComputerName $DeviceName -MethodName Win32Shutdown -Arguments @{ Flags = 4 }
+    $Sessions = quser /server:$DeviceName|Out-String
+    
+
+    $SessionBox.Text = $Sessions
+    
+    
+    Start-Sleep 7
+    
+    
+    $lblForError.Text = ''
+    }) 
+
+##Logoff user Action
+
+$ChooseIDButton.Add_Click({
+$DeviceName = $textBox2.Text
+$IdGet = $IdBox.Text
+quser /server:$DeviceName
+logoff $IdGet /server:$DeviceName
+$lblForError.Text = 'Logging off ...'
+
+})
+
+
+    
+
+
+#Dispplays the form
+$AppForm.ShowDialog()
+
+#Cleans-up the form
+$AppForm.Dispose()
+
+})
+
+#Dispplays the form
+$AppForm.ShowDialog()
+
+#Cleans-up the form
+$AppForm.Dispose()
